@@ -8,14 +8,15 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 
 public class RestCallAsObservable {
 
-  private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
+  private static final String BASE_URL = "http://samples.openweathermap.org/data/2.5/weather?q=";
 
   public static Observable<String> getCurrentWeather(final String cityName) {
-
-    Observable.OnSubscribe<String> onSubscribe = subscriber -> {
+	  
+	  String appID = "&appid=b6907d289e10d714a6e88b30761fae22";
+	  Observable.OnSubscribe<String> onSubscribe = subscriber -> {
 
       try {
-        String url = BASE_URL + cityName;
+        String url = BASE_URL + cityName + appID;
 
         Client client = Client.create();
         WebResource webResource = client.resource(url);
@@ -54,11 +55,10 @@ public class RestCallAsObservable {
     // first attempt, you can see weather, but no city names
     Observable<String> allWeathers = allCities.flatMap(city -> getCurrentWeather(city));
     
-    allWeathers.subscribe(System.out::println);
+    //allWeathers.subscribe(System.out::println);
     
     // concat city and weather using a lambda inside another.
-    allCities.flatMap(city -> getCurrentWeather(city).map(weather -> city + "->" + weather))
-             .subscribe(System.out::println);
+    allCities.flatMap(city -> getCurrentWeather(city).map(weather -> city + "->" + weather)).subscribe(System.out::println);
 
   
   }
